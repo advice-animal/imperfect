@@ -2,4 +2,4 @@
 requires = ["setuptools_scm", "setuptools >= 43.0.0", "wheel"]
 
 [tool.setuptools_scm]
-write_to = "imperfect/version.py"
+write_to = "imperfect/_version.py"
