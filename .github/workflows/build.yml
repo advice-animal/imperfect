@@ -31,7 +31,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -U .[test]
       - name: Test
-        run: python -m unittest imperfect.tests
+        run: python -m imperfect.tests
 
   imperfect:
     runs-on: ${{ matrix.os }}

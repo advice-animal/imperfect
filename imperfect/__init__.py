@@ -11,8 +11,8 @@ from typing import Any, Optional, Sequence, Tuple
 from .types import ConfigEntry, ConfigFile, ConfigSection, ParseError, ValueLine
 
 try:
-    from .version import __version__
-except ImportError:
+    from ._version import __version__
+except ImportError:  # pragma: no cover
     __version__ = "dev"
 
 __all__ = [
