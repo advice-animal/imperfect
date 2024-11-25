@@ -8,6 +8,11 @@ and splice between files.
 import re
 from typing import Any, Optional, Sequence, Tuple
 
+try:
+    from ._version import __version__
+except ImportError:  # pragma: no cover
+    __version__ = "dev"
+
 from .types import ConfigEntry, ConfigFile, ConfigSection, ParseError, ValueLine
 
 __all__ = [
