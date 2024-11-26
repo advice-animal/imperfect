@@ -40,7 +40,7 @@ format:
 .PHONY: lint
 lint:
 	ruff check $(SOURCES)
-	python -m checkdeps --allow-names imperfect imperfect
+	python -m checkdeps --metadata-extras dev,test --allow-names imperfect imperfect
 	mypy --strict --install-types --non-interactive imperfect
 
 .PHONY: release
