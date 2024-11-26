@@ -1,9 +1,18 @@
 PYTHON?=python
 SOURCES=imperfect setup.py
 
+UV:=$(shell uv --version)
+ifdef UV
+	VENV:=uv venv
+	PIP:=uv pip
+else
+	VENV:=python -m venv
+	PIP:=python -m pip
+endif
+
 .PHONY: venv
 venv:
-	$(PYTHON) -m venv .venv
+	$(VENV) .venv
 	source .venv/bin/activate && make setup
 	@echo 'run `source .venv/bin/activate` to use virtualenv'
 
@@ -12,7 +21,7 @@ venv:
 
 .PHONY: setup
 setup:
-	python -m pip install -Ue .[dev,test]
+	$(PIP) install -Ue .[dev,test]
 
 .PHONY: test
 test:
@@ -25,13 +34,13 @@ fuzz:
 
 .PHONY: format
 format:
-	python -m ufmt format $(SOURCES)
+	ruff format
+	ruff check --fix
 
 .PHONY: lint
 lint:
-	python -m ufmt check $(SOURCES)
-	python -m flake8 $(SOURCES)
-	python -m checkdeps --metadata-extras test --allow-names imperfect imperfect
+	ruff check $(SOURCES)
+	python -m checkdeps --allow-names imperfect imperfect
 	mypy --strict --install-types --non-interactive imperfect
 
 .PHONY: release
