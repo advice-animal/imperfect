@@ -2,6 +2,10 @@ import io
 from dataclasses import dataclass, field
 from typing import List, TextIO
 
+# Unlike configparser we don't use a special type for this, it's unlikely
+# someone will call their section this...
+UNNAMED_SECTION = "<UNNAMED_SECTION>"
+
 
 class ParseError(Exception):
     pass
@@ -62,7 +66,10 @@ class ConfigFile:
                 leading_whitespace="\n" if len(self.sections) else "",
                 trailing_whitespace="",
             )
-            self.sections.append(s)
+            if section == UNNAMED_SECTION:
+                self.sections.insert(0, s)
+            else:
+                self.sections.append(s)
         s.set_value(key, value)
 
 
@@ -77,14 +84,15 @@ class ConfigSection:
     entries: List["ConfigEntry"] = field(default_factory=list)
 
     def build(self, buf: TextIO) -> None:
-        buf.write(
-            self.leading_whitespace
-            + self.leading_square_bracket
-            + self.name
-            + self.trailing_square_bracket
-            + self.trailing_whitespace
-            + self.newline
-        )
+        if self.name != UNNAMED_SECTION:
+            buf.write(
+                self.leading_whitespace
+                + self.leading_square_bracket
+                + self.name
+                + self.trailing_square_bracket
+                + self.trailing_whitespace
+                + self.newline
+            )
         for e in self.entries:
             e.build(buf)
 
