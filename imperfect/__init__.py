@@ -13,7 +13,14 @@ try:
 except ImportError:  # pragma: no cover
     __version__ = "dev"
 
-from .types import ConfigEntry, ConfigFile, ConfigSection, ParseError, ValueLine
+from .types import (
+    ConfigEntry,
+    ConfigFile,
+    ConfigSection,
+    ParseError,
+    ValueLine,
+    UNNAMED_SECTION,
+)
 
 __all__ = [
     "ConfigFile",
@@ -23,6 +30,7 @@ __all__ = [
     "Parser",
     "ParseError",
     "parse_string",
+    "UNNAMED_SECTION",
 ]
 
 LEADING_WHITESPACE = re.compile(
@@ -196,7 +204,15 @@ class Parser:
                 )
                 entry.value.append(value)
                 if sect is None:
-                    raise ParseError("Entry outside a section")
+                    sect = ConfigSection(
+                        leading_whitespace="",
+                        leading_square_bracket="",
+                        name=UNNAMED_SECTION,
+                        trailing_square_bracket="",
+                        trailing_whitespace="",
+                        newline="",
+                    )
+                    root.sections.append(sect)
                 sect.entries.append(entry)
                 entry_indent = len(parts[0])
                 wsbuf = ""

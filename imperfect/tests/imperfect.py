@@ -63,11 +63,19 @@ class ImperfectTests(unittest.TestCase):
     @parameterized.expand(
         [
             ("a=1",),
+            ("a=1\n",),
         ],
     )  # type: ignore
-    def test_fail_to_parse(self, example: str) -> None:
-        with self.assertRaises(imperfect.ParseError):
-            imperfect.parse_string(example)
+    def test_unnamed_section(self, example: str) -> None:
+        conf = imperfect.parse_string(example)
+        self.assertEqual(conf[imperfect.UNNAMED_SECTION]["a"], "1")
+        conf[imperfect.UNNAMED_SECTION].set_value("a", "2")
+        self.assertEqual("a=2\n", conf.text)
+
+    def test_explicitly_create_unnamed_section(self) -> None:
+        conf = imperfect.parse_string("[x]\n")
+        conf.set_value(imperfect.UNNAMED_SECTION, "a", "2")
+        self.assertEqual("a = 2\n[x]\n", conf.text)
 
     def test_multiline_with_comment(self) -> None:
         conf = imperfect.parse_string("[s]\na=\n #comment\n b\n")
